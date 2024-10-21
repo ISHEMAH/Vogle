@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Create Order</title>
+</head>
+<body>
+    <h2>Create a New Catering Order</h2>
+    <form method="POST">
+        {% csrf_token %}
+    
+        <label for="client_name">Client Name:</label>
+        <input type="text" id="client_name" name="client_name" required><br><br>
+    
+        <label for="event_type">Event Type:</label>
+        <select id="event_type" name="event_type" required>
+            <option value="wedding">Wedding</option>
+            <option value="corporate">Corporate Event</option>
+            <option value="birthday">Birthday</option>
+            <option value="other">Other</option>
+        </select><br><br>
+    
+        <label for="number_of_guests">Number of Guests:</label>
+        <input type="number" id="number_of_guests" name="number_of_guests" min="1" required><br><br>
+    
+        <label for="event_date">Event Date:</label>
+        <input type="date" id="event_date" name="event_date" required><br><br>
+    
+        <label for="menu_items">Menu Items:</label>
+        <select id="menu_items" name="menu_items" multiple required>
+            <option value="starter1">Starter 1</option>
+            <option value="main1">Main Course 1</option>
+            <option value="dessert1">Dessert 1</option>
+        </select><br><br>
+    
+        <label for="special_requests">Special Requests:</label>
+        <textarea id="special_requests" name="special_requests" rows="4" cols="50"></textarea><br><br>
+    
+        <button type="submit">Submit Order</button>
+    </form>
+    
+</body>
+</html>
