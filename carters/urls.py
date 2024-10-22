@@ -1,12 +1,26 @@
 # carters/urls.py
 from django.urls import path
-from .views import create_catering_order, create_staff_schedule, create_event_plan, success,landing_page
-from . import views  
+from . import views
 
 urlpatterns = [
-    path('create-order/', create_catering_order, name='create_order'),
-    path('create-schedule/', create_staff_schedule, name='create_schedule'),
-    path('create-event/', create_event_plan, name='create_event'),
-    path('success/', success, name='success'),
     path('', views.landing_page, name='landing_page'),
+    path('dashboard/', views.dashboard, name='dashboard'),
+
+    # Catering Orders
+    path('orders/', views.order_list, name='order_list'),
+    path('orders/create/', views.order_create, name='order_create'),
+    path('orders/update/<int:pk>/', views.order_update, name='order_update'),
+    path('orders/delete/<int:pk>/', views.order_delete, name='order_delete'),
+
+    # Staff Schedules
+    path('staff/', views.staff_list, name='staff_list'),
+    path('staff/create/', views.staff_create, name='staff_create'),
+    path('staff/update/<int:pk>/', views.staff_update, name='staff_update'),
+    path('staff/delete/<int:pk>/', views.staff_delete, name='staff_delete'),
+
+    # Event Plans
+    path('events/', views.event_list, name='event_list'),
+    path('events/create/', views.event_create, name='event_create'),
+    path('events/update/<int:pk>/', views.event_update, name='event_update'),
+    path('events/delete/<int:pk>/', views.event_delete, name='event_delete'),
 ]

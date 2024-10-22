@@ -1,44 +1,121 @@
 # carters/views.py
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from .forms import CateringOrderForm, StaffScheduleForm, EventPlanForm
+from .models import StaffSchedule, CateringOrder, EventPlan
 
-def create_catering_order(request):
+# Dashboard View
+def dashboard(request):
+    # Simple analytics (counts)
+    total_orders = CateringOrder.objects.count()
+    total_events = EventPlan.objects.count()
+    total_staff = StaffSchedule.objects.count()
+
+    context = {
+        'total_orders': total_orders,
+        'total_events': total_events,
+        'total_staff': total_staff,
+    }
+    return render(request, 'carters/dashboard.html', context)
+
+# Catering Order Views
+def order_list(request):
+    orders = CateringOrder.objects.all()
+    return render(request, 'carters/order_list.html', {'orders': orders})
+
+def order_create(request):
     if request.method == 'POST':
         form = CateringOrderForm(request.POST)
         if form.is_valid():
             form.save()
-            print("Data saved successfully")
-            return redirect('success')  # Redirect to a success page or another view
+            return redirect('order_list')
     else:
         form = CateringOrderForm()
+    return render(request, 'carters/order_form.html', {'form': form})
 
-    return render(request, 'carters/create_catering_order.html', {'form': form})
+def order_update(request, pk):
+    order = get_object_or_404(CateringOrder, pk=pk)
+    if request.method == 'POST':
+        form = CateringOrderForm(request.POST, instance=order)
+        if form.is_valid():
+            form.save()
+            return redirect('order_list')
+    else:
+        form = CateringOrderForm(instance=order)
+    return render(request, 'carters/order_form.html', {'form': form})
 
-def create_staff_schedule(request):
+def order_delete(request, pk):
+    order = get_object_or_404(CateringOrder, pk=pk)
+    if request.method == 'POST':
+        order.delete()
+        return redirect('order_list')
+    return render(request, 'carters/order_confirm_delete.html', {'order': order})
+
+# Staff Schedule Views
+def staff_list(request):
+    staff_schedules = StaffSchedule.objects.all()
+    return render(request, 'carters/staff_list.html', {'staff_schedules': staff_schedules})
+
+def staff_create(request):
     if request.method == 'POST':
         form = StaffScheduleForm(request.POST)
         if form.is_valid():
             form.save()
-            print("Data saved successfully")
-            return redirect('success')  # Redirect to a success page or another view
+            return redirect('staff_list')
     else:
         form = StaffScheduleForm()
-    return render(request, 'create_staff_schedule.html', {'form': form})
+    return render(request, 'carters/staff_form.html', {'form': form})
 
-def create_event_plan(request):
+def staff_update(request, pk):
+    staff = get_object_or_404(StaffSchedule, pk=pk)
+    if request.method == 'POST':
+        form = StaffScheduleForm(request.POST, instance=staff)
+        if form.is_valid():
+            form.save()
+            return redirect('staff_list')
+    else:
+        form = StaffScheduleForm(instance=staff)
+    return render(request, 'carters/staff_form.html', {'form': form})
+
+def staff_delete(request, pk):
+    staff = get_object_or_404(StaffSchedule, pk=pk)
+    if request.method == 'POST':
+        staff.delete()
+        return redirect('staff_list')
+    return render(request, 'carters/staff_confirm_delete.html', {'staff': staff})
+
+# Event Plan Views
+def event_list(request):
+    events = EventPlan.objects.all()
+    return render(request, 'carters/event_list.html', {'events': events})
+
+def event_create(request):
     if request.method == 'POST':
         form = EventPlanForm(request.POST)
         if form.is_valid():
             form.save()
-            print("Data saved successfully")
-            return redirect('success')  # Redirect to a success page or another view
+            return redirect('event_list')
     else:
         form = EventPlanForm()
-    return render(request, 'carters/create_event_plan.html', {'form': form})
+    return render(request, 'carters/event_form.html', {'form': form})
 
-def success(request):
-    return render(request, 'carters/success.html')
+def event_update(request, pk):
+    event = get_object_or_404(EventPlan, pk=pk)
+    if request.method == 'POST':
+        form = EventPlanForm(request.POST, instance=event)
+        if form.is_valid():
+            form.save()
+            return redirect('event_list')
+    else:
+        form = EventPlanForm(instance=event)
+    return render(request, 'carters/event_form.html', {'form': form})
+
+def event_delete(request, pk):
+    event = get_object_or_404(EventPlan, pk=pk)
+    if request.method == 'POST':
+        event.delete()
+        return redirect('event_list')
+    return render(request, 'carters/event_confirm_delete.html', {'event': event})
 
 
 def landing_page(request):
-    return render(request, 'carters/landing_page.html')    
+    return render(request , 'carters/landing_page.html')

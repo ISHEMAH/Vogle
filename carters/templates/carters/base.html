@@ -1,0 +1,44 @@
+<!-- carters/templates/carters/base.html -->
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Carterio Dashboard</title>
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Include Satoshi Font -->
+    <style>
+        @font-face {
+            font-family: 'Satoshi-Medium';
+            src: url("{% static 'fonts/Satoshi-Medium.woff2' %}") format('woff2');
+            font-weight: normal;
+            font-style: normal;
+        }
+        body {
+            font-family: 'Satoshi-Medium', sans-serif;
+        }
+    </style>
+</head>
+<body class="flex h-screen bg-gray-100">
+    <!-- Sidebar -->
+    <aside class="w-64 bg-[#FC4B37] text-white flex-shrink-0">
+        <div class="p-4">
+            <h2 class="text-2xl font-bold">Carterio</h2>
+        </div>
+        <nav>
+            <a href="{% url 'dashboard' %}" class="block py-2 px-4 hover:bg-red-600">Dashboard</a>
+            <a href="{% url 'event_list' %}" class="block py-2 px-4 hover:bg-red-600">Events</a>
+            <a href="{% url 'staff_list' %}" class="block py-2 px-4 hover:bg-red-600">Staff Schedule</a>
+            <a href="{% url 'order_list' %}" class="block py-2 px-4 hover:bg-red-600">Catering Orders</a>
+        </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <div class="flex-1 overflow-auto">
+        {% block content %}
+        {% endblock %}
+    </div>
+</body>
+</html>

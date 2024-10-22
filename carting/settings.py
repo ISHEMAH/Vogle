@@ -48,6 +48,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    # 'django.contrib.staticfiles',
+    # 'carters.middleware.MyCustomMiddleware',  # Reference your middleware class here
 ]
 
 ROOT_URLCONF = 'carting.urls'
@@ -127,8 +129,8 @@ STATIC_URL = '/static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-STATIC_ROOT = BASE_DIR / 'staticfiles'
+STATIC_ROOT = BASE_DIR / "staticfiles"
 
 # STATICFILES_DIRS = [
-#     BASE_DIR / 'static',
+#     BASE_DIR / "carters/static",  # Add your path here
 # ]
