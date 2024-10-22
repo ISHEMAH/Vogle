@@ -38,3 +38,7 @@ def create_event_plan(request):
 
 def success(request):
     return render(request, 'carters/success.html')
+
+
+def landing_page(request):
+    return render(request, 'carters/landing_page.html')    
