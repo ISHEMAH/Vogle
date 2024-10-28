@@ -11,6 +11,7 @@ urlpatterns = [
     path('orders/create/', views.order_create, name='order_create'),
     path('orders/update/<int:pk>/', views.order_update, name='order_update'),
     path('orders/delete/<int:pk>/', views.order_delete, name='order_delete'),
+    path('orders/update-status/<int:pk>/', views.order_update_status, name='order_update_status'),
 
     # Staff Schedules
     path('staff/', views.staff_list, name='staff_list'),
@@ -23,4 +24,5 @@ urlpatterns = [
     path('events/create/', views.event_create, name='event_create'),
     path('events/update/<int:pk>/', views.event_update, name='event_update'),
     path('events/delete/<int:pk>/', views.event_delete, name='event_delete'),
+    path('events/update-status/<int:pk>/', views.event_update_status, name='event_update_status'),
 ]

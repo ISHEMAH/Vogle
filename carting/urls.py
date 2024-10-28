@@ -8,6 +8,7 @@ from carting import settings
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('carters.urls')),
+    path('employees/', include('employees.urls')),
 ]
 
 # if settings.DEBUG:

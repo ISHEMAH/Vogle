@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Update Schedule Status</title>
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+</head>
+<body>
+    <h1>Update Status for {{ schedule.staff_member }}</h1>
+    <form method="post">
+        {% csrf_token %}
+        <label for="status">Status:</label>
+        <select name="status" id="status">
+            <option value="Pending" {% if schedule.status == "Pending" %}selected{% endif %}>Pending</option>
+            <option value="Approved" {% if schedule.status == "Approved" %}selected{% endif %}>Approved</option>
+            <option value="Completed" {% if schedule.status == "Completed" %}selected{% endif %}>Completed</option>
+        </select>
+        <button type="submit">Update Status</button>
+    </form>
+</body>
+</html>

@@ -1,5 +1,4 @@
-<!-- carters/templates/carters/order_list.html -->
-{% extends "carters/base.html" %}
+{% extends "employees/base.html" %}
 
 {% block content %}
 <h1>Catering Orders</h1>
@@ -39,7 +38,7 @@
 <script>
 function updateOrderStatus(selectElement, orderId) {
     const newStatus = selectElement.value;
-    fetch(`/orders/update-status/${orderId}/`, {
+    fetch(`/employees/orders/update/${orderId}/`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/x-www-form-urlencoded',

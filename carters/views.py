@@ -1,5 +1,6 @@
 # carters/views.py
 from django.shortcuts import render, redirect, get_object_or_404
+from django.http import JsonResponse
 from .forms import CateringOrderForm, StaffScheduleForm, EventPlanForm
 from .models import StaffSchedule, CateringOrder, EventPlan
 
@@ -49,6 +50,16 @@ def order_delete(request, pk):
         order.delete()
         return redirect('order_list')
     return render(request, 'carters/order_confirm_delete.html', {'order': order})
+
+def order_update_status(request, pk):
+    if request.method == 'POST':
+        order = get_object_or_404(CateringOrder, pk=pk)
+        new_status = request.POST.get('status')
+        if new_status in ['Pending', 'Confirmed', 'Completed']:
+            order.order_status = new_status
+            order.save()
+            return JsonResponse({'status': 'success'})
+    return JsonResponse({'status': 'error'}, status=400)
 
 # Staff Schedule Views
 def staff_list(request):
@@ -116,6 +127,15 @@ def event_delete(request, pk):
         return redirect('event_list')
     return render(request, 'carters/event_confirm_delete.html', {'event': event})
 
+def event_update_status(request, pk):
+    if request.method == 'POST':
+        event = get_object_or_404(EventPlan, pk=pk)
+        new_status = request.POST.get('status')
+        if new_status in ['Planned', 'In Progress', 'Completed']:
+            event.event_status = new_status
+            event.save()
+            return JsonResponse({'status': 'success'})
+    return JsonResponse({'status': 'error'}, status=400)
 
 def landing_page(request):
     return render(request , 'carters/landing_page.html')

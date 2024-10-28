@@ -1,0 +1,61 @@
+<!-- employees/templates/employees/dashboard.html -->
+{% extends "employees/base.html" %}
+
+{% block content %}
+<div class="space-y-6">
+    <h1 class="text-2xl font-semibold text-gray-900">Employee Dashboard</h1>
+
+    <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        <!-- Upcoming Events Card -->
+        <div class="bg-white overflow-hidden shadow rounded-lg">
+            <div class="p-5">
+                <h2 class="text-lg font-medium text-gray-900 mb-4">Upcoming Events</h2>
+                <ul class="space-y-3">
+                    {% for event in upcoming_events %}
+                    <li class="flex items-center justify-between">
+                        <span class="text-sm text-gray-700">{{ event.event_name }}</span>
+                        <span class="text-sm text-gray-500">{{ event.event_date }}</span>
+                    </li>
+                    {% empty %}
+                    <li class="text-sm text-gray-500">No upcoming events</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+
+        <!-- Recent Orders Card -->
+        <div class="bg-white overflow-hidden shadow rounded-lg">
+            <div class="p-5">
+                <h2 class="text-lg font-medium text-gray-900 mb-4">Recent Orders</h2>
+                <ul class="space-y-3">
+                    {% for order in recent_orders %}
+                    <li class="flex items-center justify-between">
+                        <span class="text-sm text-gray-700">{{ order.client_name }}</span>
+                        <span class="text-sm text-gray-500">{{ order.event_date }}</span>
+                    </li>
+                    {% empty %}
+                    <li class="text-sm text-gray-500">No recent orders</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+
+        <!-- Staff Schedules Card -->
+        <div class="bg-white overflow-hidden shadow rounded-lg">
+            <div class="p-5">
+                <h2 class="text-lg font-medium text-gray-900 mb-4">Staff Schedules</h2>
+                <ul class="space-y-3">
+                    {% for schedule in staff_schedules %}
+                    <li class="flex items-center justify-between">
+                        <span class="text-sm text-gray-700">{{ schedule.staff_member }}</span>
+                        <span class="text-sm text-gray-500">{{ schedule.event_date }}</span>
+                    </li>
+                    {% empty %}
+                    <li class="text-sm text-gray-500">No upcoming schedules</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

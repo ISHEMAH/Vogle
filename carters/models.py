@@ -1,6 +1,7 @@
 # carters/models.py
 from django.db import models
 from django.utils import timezone
+from django.contrib.auth.models import User
 
 class CateringOrder(models.Model):
     client_name = models.CharField(max_length=255, default='')
@@ -49,3 +50,11 @@ class EventPlan(models.Model):
 
     def __str__(self):
         return self.event_name
+
+
+class Employee(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    can_change_status = models.BooleanField(default=True)
+
+    def __str__(self):
+        return self.user.username

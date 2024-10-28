@@ -1,0 +1,59 @@
+{% extends "employees/base.html" %}
+
+{% block content %}
+<h1>Staff Schedules</h1>
+<table>
+    <thead>
+        <tr>
+            <th>Staff Member</th>
+            <th>Event Date</th>
+            <th>Shift Start</th>
+            <th>Shift End</th>
+            <th>Assigned Event</th>
+            <th>Event Status</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for schedule in schedules %}
+        <tr>
+            <td>{{ schedule.staff_member }}</td>
+            <td>{{ schedule.event_date }}</td>
+            <td>{{ schedule.shift_start }}</td>
+            <td>{{ schedule.shift_end }}</td>
+            <td>{{ schedule.assigned_event.event_name }}</td>
+            <td>{{ schedule.assigned_event.event_status }}</td>
+            <td>
+                <select onchange="updateStatus(this, '{{ schedule.id }}')">
+                    <option value="Planned" {% if schedule.assigned_event.event_status == 'Planned' %}selected{% endif %}>Planned</option>
+                    <option value="In Progress" {% if schedule.assigned_event.event_status == 'In Progress' %}selected{% endif %}>In Progress</option>
+                    <option value="Completed" {% if schedule.assigned_event.event_status == 'Completed' %}selected{% endif %}>Completed</option>
+                </select>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<script>
+function updateStatus(selectElement, scheduleId) {
+    const newStatus = selectElement.value;
+    fetch(`/employees/schedules/update/${scheduleId}/`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'X-CSRFToken': '{{ csrf_token }}'
+        },
+        body: `status=${newStatus}`
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.status === 'success') {
+            alert('Status updated successfully');
+        } else {
+            alert('Error updating status');
+        }
+    });
+}
+</script>
+{% endblock %}
