@@ -5,8 +5,16 @@
 <div class="space-y-6">
     <h1 class="text-2xl font-semibold text-gray-900">Employee Dashboard</h1>
 
+   
+    <div class="bg-white p-6 rounded-lg shadow mb-6">
+        <h2 class="text-lg font-medium text-gray-900 mb-4">Monthly Statistics</h2>
+        <div class="h-64">
+            <canvas id="statsChart"></canvas>
+        </div>
+    </div>
+
     <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-        <!-- Upcoming Events Card -->
+        
         <div class="bg-white overflow-hidden shadow rounded-lg">
             <div class="p-5">
                 <h2 class="text-lg font-medium text-gray-900 mb-4">Upcoming Events</h2>
@@ -23,7 +31,7 @@
             </div>
         </div>
 
-        <!-- Recent Orders Card -->
+        
         <div class="bg-white overflow-hidden shadow rounded-lg">
             <div class="p-5">
                 <h2 class="text-lg font-medium text-gray-900 mb-4">Recent Orders</h2>
@@ -58,4 +66,55 @@
         </div>
     </div>
 </div>
+
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script type="text/javascript">
+    var chartData = {chart_data};
+    console.log(chartData);
+    var ctx = document.getElementById('statsChart').getContext('2d');
+    var chart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: chartData.months,
+            datasets: [
+                {
+                    label: 'Events',
+                    data: chartData.event_counts,
+                    backgroundColor: 'rgba(59, 130, 246, 0.5)',
+                    borderColor: 'rgb(59, 130, 246)',
+                    borderWidth: 1
+                },
+                {
+                    label: 'Orders',
+                    data: chartData.order_counts,
+                    backgroundColor: 'rgba(16, 185, 129, 0.5)',
+                    borderColor: 'rgb(16, 185, 129)',
+                    borderWidth: 1
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        stepSize: 1
+                    }
+                }
+            },
+            plugins: {
+                legend: {
+                    position: 'top',
+                },
+                title: {
+                    display: true,
+                    text: 'Events & Orders Overview'
+                }
+            }
+        }
+    });
+</script>
 {% endblock %}

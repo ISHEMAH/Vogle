@@ -1,7 +1,9 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.http import JsonResponse
 from carters.models import CateringOrder, StaffSchedule, EventPlan
-from django.db.models import Q
+from django.db.models import Q, Count
+from django.db.models.functions import TruncMonth
+from datetime import datetime, timedelta
 
 def schedule_list(request):
     schedules = StaffSchedule.objects.select_related('assigned_event').all()
@@ -33,16 +35,60 @@ def update_order_status(request, order_id):
     return JsonResponse({'status': 'error'}, status=400)
 
 def dashboard(request):
-    upcoming_events = EventPlan.objects.filter(event_status='Planned').order_by('event_date')[:5]
-    recent_orders = CateringOrder.objects.order_by('-event_date')[:5]
-    staff_schedules = StaffSchedule.objects.select_related('assigned_event').filter(
-        Q(assigned_event__event_status='Planned') | Q(assigned_event__event_status='In Progress')
-    ).order_by('event_date')[:5]
+    # Get the last 6 months of data
+    six_months_ago = datetime.now() - timedelta(days=180)
+    
+    # Get events data by month
+    events_by_month = EventPlan.objects.filter(
+        event_date__gte=six_months_ago
+    ).annotate(
+        month=TruncMonth('event_date')
+    ).values('month').annotate(
+        count=Count('id')
+    ).order_by('month')
+
+    # Get orders data by month
+    orders_by_month = CateringOrder.objects.filter(
+        event_date__gte=six_months_ago
+    ).annotate(
+        month=TruncMonth('event_date')
+    ).values('month').annotate(
+        count=Count('id')
+    ).order_by('month')
+
+    # Process data for the chart
+    months = []
+    event_counts = []
+    order_counts = []
+    
+    for month in range(6):
+        date = datetime.now() - timedelta(days=30 * (5 - month))
+        month_name = date.strftime('%B')
+        months.append(month_name)
+        
+        # Find event count for this month
+        event_count = next(
+            (item['count'] for item in events_by_month if item['month'].strftime('%B') == month_name),
+            0
+        )
+        event_counts.append(event_count)
+        
+        # Find order count for this month
+        order_count = next(
+            (item['count'] for item in orders_by_month if item['month'].strftime('%B') == month_name),
+            0
+        )
+        order_counts.append(order_count)
 
     context = {
-        'upcoming_events': upcoming_events,
-        'recent_orders': recent_orders,
-        'staff_schedules': staff_schedules,
+        'upcoming_events': EventPlan.objects.filter(event_date__gte=datetime.now()).order_by('event_date')[:5],
+        'recent_orders': CateringOrder.objects.all().order_by('-event_date')[:5],
+        'staff_schedules': StaffSchedule.objects.filter(event_date__gte=datetime.now()).order_by('event_date')[:5],
+        'chart_data': {
+            'months': months,
+            'event_counts': event_counts,
+            'order_counts': order_counts,
+        }
     }
     return render(request, 'employees/dashboard.html', context)
 
