@@ -70,8 +70,9 @@
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script type="text/javascript">
-    var chartData = {chart_data};
-    console.log(chartData);
+    // Parse the JSON data
+    var chartData = JSON.parse('{{ chart_data|safe }}');
+    
     var ctx = document.getElementById('statsChart').getContext('2d');
     var chart = new Chart(ctx, {
         type: 'bar',
@@ -90,6 +91,13 @@
                     data: chartData.order_counts,
                     backgroundColor: 'rgba(16, 185, 129, 0.5)',
                     borderColor: 'rgb(16, 185, 129)',
+                    borderWidth: 1
+                },
+                {
+                    label: 'Schedules',
+                    data: chartData.schedule_counts,
+                    backgroundColor: 'rgba(236, 72, 153, 0.5)',
+                    borderColor: 'rgb(236, 72, 153)',
                     borderWidth: 1
                 }
             ]
@@ -111,7 +119,7 @@
                 },
                 title: {
                     display: true,
-                    text: 'Events & Orders Overview'
+                    text: 'Events, Orders & Schedules Overview'
                 }
             }
         }

@@ -7,7 +7,7 @@ urlpatterns = [
     path('dashboard/', views.dashboard, name='dashboard'),
 
     # Catering Orders
-    path('orders/', views.order_list, name='order_list'),
+    path('orders/', views.order, name='order_list'),
     path('orders/create/', views.order_create, name='order_create'),
     path('orders/update/<int:pk>/', views.order_update, name='order_update'),
     path('orders/delete/<int:pk>/', views.order_delete, name='order_delete'),

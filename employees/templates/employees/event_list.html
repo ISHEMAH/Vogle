@@ -3,6 +3,16 @@
 {% block content %}
 <div class="bg-white shadow rounded-lg p-6">
     <h1 class="text-2xl font-semibold text-gray-900 mb-6">Events</h1>
+
+    <!-- Add Chart Section -->
+    <div class="bg-white p-6 rounded-lg shadow mb-6">
+        <h2 class="text-lg font-medium text-gray-900 mb-4">Events Overview</h2>
+        <div class="h-64">
+            <canvas id="eventsChart"></canvas>
+        </div>
+    </div>
+
+    <!-- Keep existing table structure -->
     <div class="overflow-x-auto">
         <table class="min-w-full divide-y divide-gray-200">
             <thead class="bg-gray-50">
@@ -38,6 +48,48 @@
         </table>
     </div>
 </div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script type="text/javascript">
+    // Parse the JSON data
+    var chartData = JSON.parse('{{ chart_data|safe }}');
+    
+    var ctx = document.getElementById('eventsChart').getContext('2d');
+    var chart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: chartData.dates,
+            datasets: [{
+                label: 'Events by Date',
+                data: chartData.counts,
+                backgroundColor: 'rgba(59, 130, 246, 0.5)', // Blue color
+                borderColor: 'rgb(59, 130, 246)',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        stepSize: 1
+                    }
+                }
+            },
+            plugins: {
+                legend: {
+                    position: 'top',
+                },
+                title: {
+                    display: true,
+                    text: 'Events Distribution'
+                }
+            }
+        }
+    });
+</script>
 
 <script>
 function updateEventStatus(selectElement, eventId) {

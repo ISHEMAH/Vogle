@@ -1,59 +1,94 @@
 {% extends "employees/base.html" %}
 
 {% block content %}
-<h1>Catering Orders</h1>
-<table>
-    <thead>
-        <tr>
-            <th>Client Name</th>
-            <th>Event Date</th>
-            <th>Menu Items</th>
-            <th>Quantity</th>
-            <th>Order Status</th>
-            <th>Total Cost</th>
-            <th>Action</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for order in orders %}
-        <tr>
-            <td>{{ order.client_name }}</td>
-            <td>{{ order.event_date }}</td>
-            <td>{{ order.menu_items }}</td>
-            <td>{{ order.quantity }}</td>
-            <td>{{ order.order_status }}</td>
-            <td>{{ order.total_cost }}</td>
-            <td>
-                <select onchange="updateOrderStatus(this, '{{ order.id }}')">
-                    <option value="Pending" {% if order.order_status == 'Pending' %}selected{% endif %}>Pending</option>
-                    <option value="Confirmed" {% if order.order_status == 'Confirmed' %}selected{% endif %}>Confirmed</option>
-                    <option value="Completed" {% if order.order_status == 'Completed' %}selected{% endif %}>Completed</option>
-                </select>
-            </td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
+<div class="bg-white shadow rounded-lg p-6">
+    <h1 class="text-2xl font-semibold text-gray-900 mb-6">Catering Orders</h1>
 
-<script>
-function updateOrderStatus(selectElement, orderId) {
-    const newStatus = selectElement.value;
-    fetch(`/employees/orders/update/${orderId}/`, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/x-www-form-urlencoded',
-            'X-CSRFToken': '{{ csrf_token }}'
+    <!-- Chart Section -->
+    <div class="bg-white p-6 rounded-lg shadow mb-6">
+        <h2 class="text-lg font-medium text-gray-900 mb-4">Orders Overview</h2>
+        <div class="h-64">
+            <canvas id="ordersChart"></canvas>
+        </div>
+    </div>
+
+    <div class="overflow-x-auto">
+        <table class="min-w-full divide-y divide-gray-200">
+            <thead class="bg-gray-50">
+                <tr>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Client Name</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Event Date</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Menu Items</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Quantity</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Total Cost</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Action</th>
+                </tr>
+            </thead>
+            <tbody class="bg-white divide-y divide-gray-200">
+                {% for order in orders %}
+                <tr class="hover:bg-gray-50">
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ order.client_name }}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ order.event_date }}</td>
+                    <td class="px-6 py-4 text-sm text-gray-900">{{ order.menu_items }}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ order.quantity }}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ order.order_status }}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${{ order.total_cost }}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                        <select 
+                            onchange="updateOrderStatus(this, '{{ order.id }}')"
+                            class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md">
+                            <option value="Pending" {% if order.order_status == 'Pending' %}selected{% endif %}>Pending</option>
+                            <option value="Confirmed" {% if order.order_status == 'Confirmed' %}selected{% endif %}>Confirmed</option>
+                            <option value="Completed" {% if order.order_status == 'Completed' %}selected{% endif %}>Completed</option>
+                        </select>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script type="text/javascript">
+    // Parse the JSON data
+    var chartData = JSON.parse('{{ chart_data|safe }}');
+    
+    var ctx = document.getElementById('ordersChart').getContext('2d');
+    var chart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: chartData.dates,
+            datasets: [{
+                label: 'Orders by Date',
+                data: chartData.counts,
+                backgroundColor: 'rgba(16, 185, 129, 0.5)', // Green color
+                borderColor: 'rgb(16, 185, 129)',
+                borderWidth: 1
+            }]
         },
-        body: `status=${newStatus}`
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.status === 'success') {
-            alert('Order status updated successfully');
-        } else {
-            alert('Error updating order status');
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        stepSize: 1
+                    }
+                }
+            },
+            plugins: {
+                legend: {
+                    position: 'top',
+                },
+                title: {
+                    display: true,
+                    text: 'Orders Distribution'
+                }
+            }
         }
     });
-}
 </script>
 {% endblock %}

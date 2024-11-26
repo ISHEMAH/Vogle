@@ -2,7 +2,15 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import JsonResponse
 from .forms import CateringOrderForm, StaffScheduleForm, EventPlanForm
-from .models import StaffSchedule, CateringOrder, EventPlan
+from .models import StaffSchedule, CateringOrder, EventPlan, Employee
+from rest_framework import viewsets
+from rest_framework.permissions import IsAuthenticated
+from .serializers import (
+    CateringOrderSerializer, 
+    StaffScheduleSerializer,
+    EventPlanSerializer,
+    EmployeeSerializer
+)
 
 # Dashboard View
 def dashboard(request):
@@ -19,16 +27,16 @@ def dashboard(request):
     return render(request, 'carters/dashboard.html', context)
 
 # Catering Order Views
-def order_list(request):
+def order(request):
     orders = CateringOrder.objects.all()
-    return render(request, 'carters/order_list.html', {'orders': orders})
+    return render(request, 'carters/order.html', {'orders': orders})
 
 def order_create(request):
     if request.method == 'POST':
         form = CateringOrderForm(request.POST)
         if form.is_valid():
             form.save()
-            return redirect('order_list')
+            return redirect('order')
     else:
         form = CateringOrderForm()
     return render(request, 'carters/order_form.html', {'form': form})
@@ -39,7 +47,7 @@ def order_update(request, pk):
         form = CateringOrderForm(request.POST, instance=order)
         if form.is_valid():
             form.save()
-            return redirect('order_list')
+            return redirect('order')
     else:
         form = CateringOrderForm(instance=order)
     return render(request, 'carters/order_form.html', {'form': form})
@@ -48,7 +56,7 @@ def order_delete(request, pk):
     order = get_object_or_404(CateringOrder, pk=pk)
     if request.method == 'POST':
         order.delete()
-        return redirect('order_list')
+        return redirect('order')
     return render(request, 'carters/order_confirm_delete.html', {'order': order})
 
 def order_update_status(request, pk):
@@ -139,3 +147,24 @@ def event_update_status(request, pk):
 
 def landing_page(request):
     return render(request , 'carters/landing_page.html')
+
+# Add these viewsets to your existing views.py
+class CateringOrderViewSet(viewsets.ModelViewSet):
+    queryset = CateringOrder.objects.all()
+    serializer_class = CateringOrderSerializer
+    permission_classes = [IsAuthenticated]
+
+class StaffScheduleViewSet(viewsets.ModelViewSet):
+    queryset = StaffSchedule.objects.all()
+    serializer_class = StaffScheduleSerializer
+    permission_classes = [IsAuthenticated]
+
+class EventPlanViewSet(viewsets.ModelViewSet):
+    queryset = EventPlan.objects.all()
+    serializer_class = EventPlanSerializer
+    permission_classes = [IsAuthenticated]
+
+class EmployeeViewSet(viewsets.ModelViewSet):
+    queryset = Employee.objects.all()
+    serializer_class = EmployeeSerializer
+    permission_classes = [IsAuthenticated]
