@@ -4,6 +4,7 @@ from django.http import JsonResponse
 from .forms import CateringOrderForm, StaffScheduleForm, EventPlanForm
 from .models import StaffSchedule, CateringOrder, EventPlan, Employee
 from rest_framework import viewsets
+
 from rest_framework.permissions import IsAuthenticated
 from .serializers import (
     CateringOrderSerializer, 
@@ -71,6 +72,7 @@ def order_update_status(request, pk):
 
 # Staff Schedule Views
 def staff_list(request):
+
     staff_schedules = StaffSchedule.objects.all()
     return render(request, 'carters/staff_list.html', {'staff_schedules': staff_schedules})
 
